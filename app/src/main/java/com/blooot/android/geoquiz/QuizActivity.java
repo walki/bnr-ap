@@ -34,7 +34,15 @@ public class QuizActivity extends ActionBarActivity {
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
-        updateQuestion();
+        // Set the first question
+        updateQuestion(true);
+        mQuestionTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Clicking the text view now moves to next question
+                updateQuestion();
+            }
+        });
 
 
         mTrueButton = (Button)findViewById(R.id.true_button);
@@ -58,15 +66,25 @@ public class QuizActivity extends ActionBarActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
                 updateQuestion();
             }
         });
 
 
+
+
     }
 
-    private void updateQuestion() {
+    private void updateQuestion()
+    {
+        updateQuestion(false);
+    }
+
+    private void updateQuestion(boolean first) {
+        if (!first)
+        {
+            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+        }
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);
     }
