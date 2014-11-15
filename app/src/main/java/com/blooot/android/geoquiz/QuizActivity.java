@@ -1,5 +1,6 @@
 package com.blooot.android.geoquiz;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,7 @@ public class QuizActivity extends ActionBarActivity {
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
 
+
     private enum Direction{
         NONE,
         PREV,
@@ -29,6 +31,9 @@ public class QuizActivity extends ActionBarActivity {
     private ImageButton mPrevButton;
     private ImageButton mNextButton;
     private TextView mQuestionTextView;
+    private Button mCheatButton;
+
+
 
     private TrueFalse[] mQuestionBank = new TrueFalse[]
             {
@@ -40,6 +45,7 @@ public class QuizActivity extends ActionBarActivity {
             };
 
     private int mCurrentIndex = 0;
+    private boolean mIsCheater;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +102,29 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
+        mCheatButton = (Button)findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Start CheatActivity
+                Intent i = new Intent(QuizActivity.this, CheatActivity.class);
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
+                i.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue);
+                startActivityForResult(i, 0);
+            }
+        });
 
 
+    }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(data==null)
+            return;
+
+        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
     }
 
     @Override
@@ -149,6 +175,9 @@ public class QuizActivity extends ActionBarActivity {
     }
 
     private void updateQuestion(Direction direction, Bundle savedState) {
+        // Only per question is someone a cheater!
+        mIsCheater = false;
+
         switch (direction)
         {
             case PREV:
@@ -170,6 +199,7 @@ public class QuizActivity extends ActionBarActivity {
                 mCurrentIndex = 0;
                 break;
         }
+        //Log.d(TAG, "Updating question text for question #"+mCurrentIndex, new Exception());
 
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);
@@ -180,16 +210,18 @@ public class QuizActivity extends ActionBarActivity {
     {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
 
-        int resultId;
-        if (userPressedTrue == answerIsTrue)
+        int toastMessageId;
+        if (mIsCheater)
         {
-            resultId = R.string.correct_toast;
+            toastMessageId = R.string.judgment_toast;
+        }else {
+            if (userPressedTrue == answerIsTrue) {
+                toastMessageId = R.string.correct_toast;
+            } else {
+                toastMessageId = R.string.incorrect_toast;
+            }
         }
-        else
-        {
-            resultId = R.string.incorrect_toast;
-        }
-        Toast.makeText(this, resultId, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, toastMessageId, Toast.LENGTH_SHORT).show();
     }
 
     @Override
