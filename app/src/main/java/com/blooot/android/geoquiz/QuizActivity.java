@@ -12,8 +12,15 @@ import android.widget.Toast;
 
 public class QuizActivity extends ActionBarActivity {
 
+    private enum Direction{
+        NONE,
+        PREV,
+        NEXT
+    }
+
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mPrevButton;
     private Button mNextButton;
     private TextView mQuestionTextView;
 
@@ -35,12 +42,12 @@ public class QuizActivity extends ActionBarActivity {
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
         // Set the first question
-        updateQuestion(true);
+        updateQuestion(Direction.NONE);
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 // Clicking the text view now moves to next question
-                updateQuestion();
+                updateQuestion(Direction.NEXT);
             }
         });
 
@@ -62,11 +69,19 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
+        mPrevButton = (Button)findViewById(R.id.prev_button);
+        mPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateQuestion(Direction.PREV);
+            }
+        });
+
         mNextButton = (Button)findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                updateQuestion();
+                updateQuestion(Direction.NEXT);
             }
         });
 
@@ -75,16 +90,28 @@ public class QuizActivity extends ActionBarActivity {
 
     }
 
-    private void updateQuestion()
-    {
-        updateQuestion(false);
-    }
 
-    private void updateQuestion(boolean first) {
-        if (!first)
+    private void updateQuestion(Direction direction) {
+        switch (direction)
         {
-            mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+            case PREV:
+                mCurrentIndex = (mCurrentIndex-1)% mQuestionBank.length;
+                // As Java Mod returns the sign of the dividend, lets ensure that we
+                // have a positive value here!
+                if (mCurrentIndex < 0)
+                {
+                    mCurrentIndex += mQuestionBank.length;
+                }
+                break;
+            case NEXT:
+                mCurrentIndex = (mCurrentIndex+1)% mQuestionBank.length;
+                break;
+            case NONE:
+            default:
+                mCurrentIndex = 0;
+                break;
         }
+
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);
     }
