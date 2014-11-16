@@ -1,5 +1,7 @@
 package com.blooot.android.criminalintent;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -14,6 +16,13 @@ public class Crime {
 
     public Date getDate() {
         return mDate;
+    }
+
+    public String getFormattedDate()
+    {
+        String day = new SimpleDateFormat("EEEE").format(mDate);
+        String date =  DateFormat.getDateInstance().format(mDate);
+        return day + ", " + date;
     }
 
     public void setDate(Date date) {
