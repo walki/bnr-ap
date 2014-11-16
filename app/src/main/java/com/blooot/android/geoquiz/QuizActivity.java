@@ -1,6 +1,9 @@
 package com.blooot.android.geoquiz;
 
+import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -49,6 +52,7 @@ public class QuizActivity extends ActionBarActivity {
 
     private boolean [] mCheatedQuestions = new boolean[mQuestionBank.length];
 
+    @TargetApi(11)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +60,13 @@ public class QuizActivity extends ActionBarActivity {
         Log.d(TAG, "onCreate(Bundle) called");
 
         setContentView(R.layout.activity_quiz);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+        {
+            ActionBar actionBar = getActionBar();
+            actionBar.setSubtitle("Bodies of Water");
+        }
+
 
         mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
 
