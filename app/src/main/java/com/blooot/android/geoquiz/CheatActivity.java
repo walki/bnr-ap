@@ -14,8 +14,11 @@ public class CheatActivity extends Activity
 {
     public static final String EXTRA_ANSWER_IS_TRUE = "com.blooot.android.geoquiz.answer_is_true";
     public static final String EXTRA_ANSWER_SHOWN = "com.blooot.android.geoquiz.answer_shown";
+    private static final String KEY_ANSWERSHOWN = "answerShown";
+
 
     private boolean mAnswerIsTrue;
+    private boolean mAnswerShown;
 
     private TextView mAnswerTextView;
     private Button mShowAnswer;
@@ -23,6 +26,8 @@ public class CheatActivity extends Activity
 
     private void setAnswerShownResult(boolean isAnswerShown)
     {
+        mAnswerShown = isAnswerShown;
+
         Intent data = new Intent();
         data.putExtra(EXTRA_ANSWER_SHOWN, isAnswerShown);
         setResult(RESULT_OK, data);
@@ -33,8 +38,12 @@ public class CheatActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cheat);
 
-        //set the default answer of false;
-        setAnswerShownResult(false);
+        mAnswerShown = false;
+        if (savedInstanceState!=null)
+        {
+            mAnswerShown = savedInstanceState.getBoolean(KEY_ANSWERSHOWN, false);
+        }
+        setAnswerShownResult(mAnswerShown);
 
         mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
 
@@ -56,5 +65,11 @@ public class CheatActivity extends Activity
                 setAnswerShownResult(true);
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(KEY_ANSWERSHOWN, mAnswerShown);
     }
 }
