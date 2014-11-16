@@ -12,13 +12,15 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+
 
 public class QuizActivity extends ActionBarActivity {
 
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
-    private static final String KEY_CHEAT_RESULT = "cheatResult";
+    private static final String KEY_CHEAT_RESULTS = "cheatResults";
 
 
     private enum Direction{
@@ -34,8 +36,6 @@ public class QuizActivity extends ActionBarActivity {
     private TextView mQuestionTextView;
     private Button mCheatButton;
 
-
-
     private TrueFalse[] mQuestionBank = new TrueFalse[]
             {
                 new TrueFalse(R.string.question_oceans, true),
@@ -46,7 +46,8 @@ public class QuizActivity extends ActionBarActivity {
             };
 
     private int mCurrentIndex = 0;
-    private boolean mIsCheater;
+
+    private boolean [] mCheatedQuestions = new boolean[mQuestionBank.length];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +60,7 @@ public class QuizActivity extends ActionBarActivity {
         mQuestionTextView = (TextView)findViewById(R.id.question_text_view);
 
         // Set the first question, or the saved state question.
-        updateQuestion(Direction.NONE, savedInstanceState);
+        loadFromSavedState(savedInstanceState);
 
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -125,7 +126,10 @@ public class QuizActivity extends ActionBarActivity {
         if(data==null)
             return;
 
-        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+        if (mCheatedQuestions[mCurrentIndex] == false) {
+            // Only update non-cheated questions
+            mCheatedQuestions[mCurrentIndex] = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+        }
     }
 
     @Override
@@ -133,7 +137,8 @@ public class QuizActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
-        outState.putBoolean(KEY_CHEAT_RESULT, mIsCheater);
+        outState.putBooleanArray(KEY_CHEAT_RESULTS, mCheatedQuestions);
+
     }
 
     @Override
@@ -171,14 +176,14 @@ public class QuizActivity extends ActionBarActivity {
         Log.d(TAG, "onDestroy() called");
     }
 
-    private  void updateQuestion(Direction direction)
+    private void loadFromSavedState(Bundle savedState)
     {
-        updateQuestion(direction, null);
+        mCheatedQuestions = savedState != null ? savedState.getBooleanArray(KEY_CHEAT_RESULTS) : new boolean[mQuestionBank.length];
+        mCurrentIndex = (savedState != null) ? savedState.getInt(KEY_INDEX, 0) : 0;
+        updateQuestion(Direction.NONE);
     }
 
-    private void updateQuestion(Direction direction, Bundle savedState) {
-        // Only per question is someone a cheater!
-        mIsCheater = savedState != null ? savedState.getBoolean(KEY_CHEAT_RESULT, false) : false;
+    private void updateQuestion(Direction direction) {
 
         switch (direction)
         {
@@ -195,7 +200,7 @@ public class QuizActivity extends ActionBarActivity {
                 mCurrentIndex = (mCurrentIndex+1)% mQuestionBank.length;
                 break;
             case NONE:
-                mCurrentIndex = (savedState != null) ? savedState.getInt(KEY_INDEX, 0) : 0;
+                //mCurrentIndex = 0;
                 break;
             default:
                 mCurrentIndex = 0;
@@ -213,7 +218,7 @@ public class QuizActivity extends ActionBarActivity {
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
 
         int toastMessageId;
-        if (mIsCheater)
+        if (mCheatedQuestions[mCurrentIndex])
         {
             toastMessageId = R.string.judgment_toast;
         }else {
@@ -224,7 +229,6 @@ public class QuizActivity extends ActionBarActivity {
             }
         }
         Toast.makeText(this, toastMessageId, Toast.LENGTH_SHORT).show();
-        mIsCheater = false;
     }
 
     @Override
