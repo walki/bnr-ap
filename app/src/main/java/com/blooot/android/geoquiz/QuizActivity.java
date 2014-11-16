@@ -18,6 +18,7 @@ public class QuizActivity extends ActionBarActivity {
 
     private static final String TAG = "QuizActivity";
     private static final String KEY_INDEX = "index";
+    private static final String KEY_CHEAT_RESULT = "cheatResult";
 
 
     private enum Direction{
@@ -132,6 +133,7 @@ public class QuizActivity extends ActionBarActivity {
         super.onSaveInstanceState(outState);
         Log.i(TAG, "onSaveInstanceState");
         outState.putInt(KEY_INDEX, mCurrentIndex);
+        outState.putBoolean(KEY_CHEAT_RESULT, mIsCheater);
     }
 
     @Override
@@ -176,7 +178,7 @@ public class QuizActivity extends ActionBarActivity {
 
     private void updateQuestion(Direction direction, Bundle savedState) {
         // Only per question is someone a cheater!
-        mIsCheater = false;
+        mIsCheater = savedState != null ? savedState.getBoolean(KEY_CHEAT_RESULT, false) : false;
 
         switch (direction)
         {
@@ -222,6 +224,7 @@ public class QuizActivity extends ActionBarActivity {
             }
         }
         Toast.makeText(this, toastMessageId, Toast.LENGTH_SHORT).show();
+        mIsCheater = false;
     }
 
     @Override
