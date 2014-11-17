@@ -22,7 +22,8 @@ public class Crime {
     {
         String day = new SimpleDateFormat("EEEE").format(mDate);
         String date =  DateFormat.getDateInstance().format(mDate);
-        return day + ", " + date;
+        String time =  DateFormat.getTimeInstance().format(mDate);
+        return day + ", " + date +  " " + time;
     }
 
     public void setDate(Date date) {
