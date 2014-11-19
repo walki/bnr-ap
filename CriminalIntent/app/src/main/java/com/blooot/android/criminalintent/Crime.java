@@ -20,10 +20,11 @@ public class Crime {
 
     public String getFormattedDate()
     {
-        String day = new SimpleDateFormat("EEEE").format(mDate);
-        String date =  DateFormat.getDateInstance().format(mDate);
-        //String time =  DateFormat.getTimeInstance().format(mDate);
-        return day + ", " + date;// +  " " + time;
+//        String day = new SimpleDateFormat("EEEE").format(mDate);
+//        String date =  DateFormat.getDateInstance().format(mDate);
+//        String time =  DateFormat.getTimeInstance().format(mDate);
+//        return day + ", " + date +  " " + time;
+        return new SimpleDateFormat("EEEE, MMM d yyyy, h:mm a").format(mDate);
     }
 
     public void setDate(Date date) {
