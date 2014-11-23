@@ -20,12 +20,12 @@ public class CrimeLab {
         mCrimes = new ArrayList<Crime>();
 
         // Generating a sample list of crimes, for now:
-        for(int i = 0; i < 100; i++){
-            Crime c = new Crime();
-            c.setTitle("Crime #" + i);
-            c.setSolved(i%2==0);
-            mCrimes.add(c);
-        }
+//        for(int i = 0; i < 100; i++){
+//            Crime c = new Crime();
+//            c.setTitle("Crime #" + i);
+//            c.setSolved(i%2==0);
+//            mCrimes.add(c);
+//        }
     }
 
     public static CrimeLab get(Context c)
@@ -40,6 +40,10 @@ public class CrimeLab {
         return mCrimes;
     }
 
+    public void addCrime(Crime c){
+        mCrimes.add(c);
+    }
+
     public Crime getCrime(UUID id){
         for(Crime c : mCrimes){
             if (c.getId().equals(id) ){
@@ -48,4 +52,5 @@ public class CrimeLab {
         }
         return null;
     }
+
 }
