@@ -21,4 +21,6 @@
     <string name="delete_crime">Delete</string>
     <string name="no_crimes">There are no crimes.</string>
 
+    <string name="take">Take!</string>
+
 </resources>
