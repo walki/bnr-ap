@@ -14,6 +14,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,11 +32,14 @@ import java.util.UUID;
  * Created by rjw on 11/16/2014.
  */
 public class CrimeFragment extends Fragment {
-
+    private static final String TAG = "CrimeFragment";
     public static final String EXTRA_CRIME_ID = "com.blooot.android.criminalintent.crime_id";
 
     private static final String DIALOG_DATE = "date";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_PHOTO = 1;
+
+
 
     private Crime mCrime;
     private EditText mTitleField;
@@ -141,7 +145,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getActivity(), CrimeCameraActivity.class);
-                startActivity(i);
+                startActivityForResult(i, REQUEST_PHOTO);
             }
         });
 
@@ -168,6 +172,15 @@ public class CrimeFragment extends Fragment {
             Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
             updateDate();
+        }else if (requestCode == REQUEST_PHOTO){
+            // Create a new Photo object and attach it to the crime
+            String filename = data.getStringExtra(CrimeCameraFragment.EXTRA_PHOTO_FILENAME);
+            if (filename != null){
+                //Log.i(TAG, "receievd filename from intent: " + filename);
+                Photo p = new Photo(filename);
+                mCrime.setPhoto(p);
+                Log.i(TAG, "Crime:  " + mCrime.getTitle() + " has a photo");
+            }
         }
     }
 

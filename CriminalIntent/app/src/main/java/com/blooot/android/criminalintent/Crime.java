@@ -17,11 +17,22 @@ public class Crime {
     private static final String JSON_TITLE = "title";
     private static final String JSON_SOLVED = "solved";
     private static final String JSON_DATE = "date";
+    private static final String JSON_PHOTO = "photo";
 
     private UUID mId;
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
+
+    public Photo getPhoto() {
+        return mPhoto;
+    }
+
+    public void setPhoto(Photo photo) {
+        mPhoto = photo;
+    }
+
+    private Photo mPhoto;
 
     public Date getDate() {
         return mDate;
@@ -76,6 +87,9 @@ public class Crime {
         }
         mSolved = jsonObject.getBoolean(JSON_SOLVED);
         mDate = new Date(jsonObject.getLong(JSON_DATE));
+        if (jsonObject.has(JSON_PHOTO)){
+            mPhoto = new Photo(jsonObject.getJSONObject(JSON_PHOTO));
+        }
     }
 
     @Override
@@ -89,6 +103,9 @@ public class Crime {
         jsonObject.put(JSON_TITLE, mTitle);
         jsonObject.put(JSON_SOLVED, mSolved);
         jsonObject.put(JSON_DATE, mDate.getTime());
+        if (mPhoto != null){
+            jsonObject.put(JSON_PHOTO, mPhoto.toJSON());
+        }
         return  jsonObject;
     }
 }
