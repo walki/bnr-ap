@@ -18,11 +18,22 @@ public class Crime {
     private static final String JSON_SOLVED = "solved";
     private static final String JSON_DATE = "date";
     private static final String JSON_PHOTO = "photo";
+    private static final String JSON_SUSPECT = "suspect";
 
     private UUID mId;
     private String mTitle;
     private Date mDate;
     private boolean mSolved;
+
+    public String getSuspect() {
+        return mSuspect;
+    }
+
+    public void setSuspect(String suspect) {
+        mSuspect = suspect;
+    }
+
+    private String mSuspect;
 
     public Photo getPhoto() {
         return mPhoto;
@@ -38,8 +49,7 @@ public class Crime {
         return mDate;
     }
 
-    public String getFormattedDate()
-    {
+    public String getFormattedDate() {
 //        String day = new SimpleDateFormat("EEEE").format(mDate);
 //        String date =  DateFormat.getDateInstance().format(mDate);
 //        String time =  DateFormat.getTimeInstance().format(mDate);
@@ -82,13 +92,16 @@ public class Crime {
 
     public Crime(JSONObject jsonObject) throws JSONException {
         mId = UUID.fromString(jsonObject.getString(JSON_ID));
-        if (jsonObject.has(JSON_TITLE)){
+        if (jsonObject.has(JSON_TITLE)) {
             mTitle = jsonObject.getString(JSON_TITLE);
         }
         mSolved = jsonObject.getBoolean(JSON_SOLVED);
         mDate = new Date(jsonObject.getLong(JSON_DATE));
-        if (jsonObject.has(JSON_PHOTO)){
+        if (jsonObject.has(JSON_PHOTO)) {
             mPhoto = new Photo(jsonObject.getJSONObject(JSON_PHOTO));
+        }
+        if (jsonObject.has(JSON_SUSPECT)) {
+            mSuspect = jsonObject.getString(JSON_SUSPECT);
         }
     }
 
@@ -103,9 +116,10 @@ public class Crime {
         jsonObject.put(JSON_TITLE, mTitle);
         jsonObject.put(JSON_SOLVED, mSolved);
         jsonObject.put(JSON_DATE, mDate.getTime());
-        if (mPhoto != null){
+        if (mPhoto != null) {
             jsonObject.put(JSON_PHOTO, mPhoto.toJSON());
         }
-        return  jsonObject;
+        jsonObject.put(JSON_SUSPECT, mSuspect);
+        return jsonObject;
     }
 }
