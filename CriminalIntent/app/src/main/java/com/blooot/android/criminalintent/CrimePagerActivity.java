@@ -15,10 +15,16 @@ import java.util.UUID;
 /**
  * Created by rjw on 11/18/2014.
  */
-public class CrimePagerActivity extends ActionBarActivity {
+public class CrimePagerActivity extends ActionBarActivity
+            implements CrimeFragment.Callbacks{
 
     private ViewPager mViewPager;
     private ArrayList<Crime> mCrimes;
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
